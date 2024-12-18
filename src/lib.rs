@@ -189,6 +189,29 @@ impl Stamp {
         &self.data
     }
 
+    /// Access the stamp's underlying data, as a byte slice.
+    ///
+    /// If the `"progmem"` feature is enabled, this method is unavailable, as pointers to
+    /// program data can't be dereferenced normally.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stockbook::{stamp, Stamp};
+    ///
+    /// static IMAGE: Stamp = unsafe { Stamp::from_raw(3, 3, [0b11111111, 0b1_0000000].as_ptr()) };
+    ///
+    /// assert_eq!(IMAGE.bytes(), &[0b11111111, 0b1_0000000]);
+    /// ```
+    #[cfg(not(feature = "progmem"))]
+    #[inline]
+    pub fn bytes(&self) -> &[u8] {
+        // SAFETY: We trust that `Self::from_raw()` was called with a valid pointer.
+        // This function is unavailable with the `"progmem"` feature, as `self.as_ptr()`
+        // can't be dereferenced normally in that case.
+        unsafe { core::slice::from_raw_parts(self.data().as_ptr(), self.pixel_count().div_ceil(8)) }
+    }
+
     /// Number of pixels in the stamp.
     ///
     /// # Examples
