@@ -172,6 +172,23 @@ impl Stamp {
         self.height
     }
 
+    /// Access the stamp's underlying raw data.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use stockbook::{stamp, Stamp};
+    ///
+    /// static DATA: [u8; 2] = [0b11111111, 0b1_0000000];
+    /// static IMAGE: Stamp = unsafe { Stamp::from_raw(3, 3, DATA.as_ptr()) };
+    ///
+    /// assert_eq!(IMAGE.data().as_ptr(), DATA.as_ptr());
+    /// ```
+    #[inline]
+    pub fn data(&self) -> &Data {
+        &self.data
+    }
+
     /// Number of pixels in the stamp.
     ///
     /// # Examples
